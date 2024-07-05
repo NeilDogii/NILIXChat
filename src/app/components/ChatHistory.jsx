@@ -1,23 +1,30 @@
 'use client'
 import React from 'react'
 import { useEffect, useState } from 'react'
+import io from 'socket.io-client'
 const ChatHistory = () => {
-    const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState(["hi"])
     useEffect(() => {
-        const fetchMessages = async () => {
-            const response = await fetch('/api/messages')
-            const result = await response.json()
-            setMessages(result)
-        }
-        fetchMessages()
+        const socket = io("http://localhost:4200")
+        socket.on("message", msg =>{
+            setMessages(e => [...e,msg] )
+        })
+        // const fetchMessages = async () => {
+        //     const response = await fetch('/api/messages')
+        //     const result = await response.json()
+        //     setMessages(result)
+        // }
+        // fetchMessages()
+
     }, [])
   return (
     <>
-        <ul>
-            {messages.map((message, index) => (
-            <li key={index}>{message.text}</li>
-            ))}
-        </ul>
+    {
+        messages.map((msg, index) => {
+            return <div key={index}>{msg}</div>
+        })
+    }
+
     </>
   )
 }
