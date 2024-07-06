@@ -21,8 +21,10 @@ const SendButton = () => {
     
   return (
     <>
+    <div className = {styles.msgButton}>
     <input className = {styles.inputBox} onChange={handleChange}></input>
     <button className = {styles.sendButton} onClick={sendMessage}>Send</button>
+    </div>
     </>
   )
 }

@@ -2,6 +2,10 @@
 #server dependencies
 
 /server/node_modules
+/server/messages.db
+/server/messages.db-journal
+/server/messages.db-shm
+/server/messages.db-wal
 
 # dependencies
 /node_modules

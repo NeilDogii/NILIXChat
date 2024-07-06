@@ -1,34 +1,31 @@
-// const express = require('express');
-// const app = express();
-// const cors = require('cors')
-// app.use(cors())
-// const http = require('http');
-// const server = http.createServer(app);
-// const io = require("socket.io")((
-//     server, {
-//     cors: {
-//       origin: "http://localhost:4200",
-//       methods: ["GET", "POST"]
-//     }
-//   }));
-// //const io = new Server(server);
+const express = require('express');
+const app = express();
+const cors = require('cors') 
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(cors()); 
+
+app.get('/api/messages', (req, res) => {
+    const fetchTable = db.prepare("SELECT * FROM messages WHERE channelID = " + req.query.channelID + ";").all()
+    res.status(200).json({message: fetchTable})
+  });
+
+app.listen(4201, () => {
+  console.log('DB endpoints listneing on port 4201!');
+});
 
 
-// // app.get('/', (req, res) => {
-// //   res.sendFile(__dirname + '/index.html');
-// // });
+const Sqlite = require('better-sqlite3');
 
-// io.on('connection', (socket) => {
-//   console.log('a user connected');
-//   socket.on('message', (msg) => {
-//     console.log(msg)
-//   });
-// });
+const db = new Sqlite('messages.db', { verbose: console.log });
 
-// server.listen(4200, () => {
-//   console.log('listening on *:4200');
-// });
+db.pragma("journal_mode = WAL");
 
+
+const createTable = "CREATE TABLE IF NOT EXISTS messages('message' varchar, 'channelID' int, 'author' varchar);"
+db.exec(createTable);
+
+const newmessage = db.prepare('INSERT INTO messages (message, channelID, author) VALUES (?, ?, ?)');
 
 const io = require("socket.io")(4200, {
     cors:{
@@ -42,5 +39,14 @@ io.on('connection', (socket) => {
     socket.on("message", (msg) => {
         console.log(msg)
         io.emit("message", msg)
+        newmessage.run(msg, 1, 'Neil');
     })
 })
+
+
+// const newmsg = db.transaction((msgs) => {
+//     newmessage.run(123456789, 'User', 1, 'Hello, World!', '', '', 0, 0);
+//   });
+
+// const row = db.prepare('SELECT * FROM messages').all() /*.get(userId); WHERE id = ?*/
+// console.log(row);
