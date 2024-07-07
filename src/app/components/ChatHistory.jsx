@@ -6,8 +6,8 @@ const ChatHistory = () => {
     const [messages, setMessages] = useState([])
     useEffect(() => {
         const socket = io("http://localhost:4200")
-        socket.on("message", msg =>{
-            setMessages(e => [...e,msg] )
+        socket.on("message", (msg, author) =>{
+            setMessages(e => [...e, author + ": " + msg] )
         })
         const fetchMessages = async () => {
             const response = await fetch('http://localhost:4201/api/messages?channelID=1')

@@ -4,6 +4,14 @@ const cors = require('cors')
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(cors()); 
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+  });
 
 app.get('/api/messages', (req, res) => {
     const fetchTable = db.prepare("SELECT * FROM messages WHERE channelID = " + req.query.channelID + ";").all()
@@ -29,17 +37,18 @@ const newmessage = db.prepare('INSERT INTO messages (message, channelID, author)
 
 const io = require("socket.io")(4200, {
     cors:{
-        origin: "http://localhost:3000",
+        origins: '*:*',
         methods:["GET", "POST"]
     }
 })
 
+
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.on("message", (msg) => {
+    socket.on("message", (msg, author) => {
         console.log(msg)
-        io.emit("message", msg)
-        newmessage.run(msg, 1, 'Neil');
+        io.emit("message", msg, author)
+        newmessage.run(msg, 1, author || 'unknown');
     })
 })
 
