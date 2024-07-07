@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { fetchData, getSession, login, logout } from "../../../lib";
+import { fetchDataRegister, getSession, login, logout } from "../../../lib";
 import axios from "axios";
 
 export default async function Page() {
@@ -9,26 +9,28 @@ export default async function Page() {
       <form
         action={async (formData) => {
           "use server";
-          let formDetails = await fetchData(formData);
+          let formDetails = await fetchDataRegister(formData);
           let dbResponse = await axios.post(
-            "http://localhost:4201/api/auth/login",
+            "http://localhost:4201/api/auth/register",
             formDetails
           );
           console.log(dbResponse.data.message);
-          if (dbResponse.data.message.length > 0) {
-            console.log("User found");
+          if (dbResponse.data.message == "found") {
+            console.log("User already exists");
+            redirect("/register");
+          } else {
+            console.log("User registered");
+            console.log(dbResponse.data.message[0])
             await login(dbResponse.data.message[0])
             redirect("/chat");
-          } else {
-            console.log("User not found");
-            redirect("/login");
           }
         }}
       >
         <input type="email" name="email" placeholder="Email" />
+        <input type="name" name="name" placeholder="Name" />
         <input type="password" name="password" placeholder="Password" />
         <br />
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
       <form
         action={async () => {

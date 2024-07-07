@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import styles from '../chat/chat.module.css'
 import io from 'socket.io-client'
 import {getSession} from '../../../lib'
-import { redirect,useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const SendButton = () => {
   let [name, setName] = useState('undefined')
@@ -18,7 +18,7 @@ const SendButton = () => {
   });
     let [msg, setMsg] = useState('None')  
     let [socket, setSocket] = useState(undefined)
-    function sendMessage() {
+     function sendMessage() {
         if(socket != undefined) {
         socket.emit('message', msg, name || undefined)
         }

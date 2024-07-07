@@ -6,6 +6,7 @@
 /server/messages.db-journal
 /server/messages.db-shm
 /server/messages.db-wal
+/server/users.db
 
 .env
 

@@ -14,7 +14,6 @@ const ChatHistory = () => {
             const result = await response.json()
             result.message.forEach(e=>{
                 let m = e.author + ": " + e.message
-                console.log(m)
                 setMessages(e => [...e, m])
             })
             

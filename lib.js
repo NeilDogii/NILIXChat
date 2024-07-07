@@ -1,7 +1,9 @@
 'use server'
 import { SignJWT, jwtVerify } from "jose";
+import { Passero_One } from "next/font/google";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import axios from 'axios';
 require("dotenv").config();
 const secretKey = "test123"; //PROCESS.ENV.SECRET || 
 const key = new TextEncoder().encode(secretKey);
@@ -20,17 +22,23 @@ export async function decrypt(input) {
   });
   return payload;
 }
+export async function fetchData(formData){
+  const user = { email: formData.get("email"), password: formData.get("password")};
+  return user;
+}
 
-export async function login(formData) {
+export async function fetchDataRegister(formData){
+  const user = { name: formData.get("name"), email: formData.get("email"), password: formData.get("password")};
+  return user;
+}
 
-  const user = { email: formData.get("email"), name: formData.get("name") };
-  // console.log(formData)
-
+export async function login(user) {
   const expires = new Date(Date.now() + 1000 * 60 * 10);
   const session = await encrypt({ user, expires });
-
   cookies().set("session", session, { expires, httpOnly: true });
 }
+
+
 
 export async function logout() {
 

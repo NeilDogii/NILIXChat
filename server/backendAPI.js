@@ -1,4 +1,7 @@
 const express = require('express');
+const Sqlite = require('better-sqlite3');
+const db = new Sqlite('messages.db', { verbose: console.log });
+const authdb = new Sqlite('users.db', { verbose: console.log });
 const app = express();
 const cors = require('cors') 
 const bodyParser = require('body-parser');
@@ -13,8 +16,33 @@ app.use((req, res, next) => {
     next();
   });
 
+db.pragma("journal_mode = WAL");
+
+const createTable_messages = "CREATE TABLE IF NOT EXISTS messages('message' varchar, 'channelID' int, 'author' varchar);"
+db.exec(createTable_messages);
+
+const createTable_auth = "CREATE TABLE IF NOT EXISTS auth('name' varchar, 'email' varchar, 'password' varchar);"
+authdb.exec(createTable_auth);
+app.post('/api/auth/register', (req, res) => {
+    console.log(req.body)
+    let fetchTable = authdb.prepare("SELECT * FROM auth WHERE email = '" + req.body.email + "';").all()
+    if(fetchTable.length > 0){
+        res.status(200).json({message: "found"})
+    } else {
+        const insert = authdb.prepare('INSERT INTO auth (name, email, password) VALUES (?, ?, ?)');
+        insert.run(req.body.name, req.body.email, req.body.password);
+        let fetchTable = authdb.prepare("SELECT * FROM auth WHERE email = '" + req.body.email + "';").all()
+        res.status(200).json({message: fetchTable})
+    }
+})
+app.post('/api/auth/login', (req, res) => {
+  console.log(req.body)
+  let fetchTable = authdb.prepare("SELECT * FROM auth WHERE email = '" + req.body.email + "' AND password = '" + req.body.password + "';").all()
+    res.status(200).json({message: fetchTable})
+    
+})
 app.get('/api/messages', (req, res) => {
-    const fetchTable = db.prepare("SELECT * FROM messages WHERE channelID = " + req.query.channelID + ";").all()
+  let fetchTable = db.prepare("SELECT * FROM messages WHERE channelID = " + req.query.channelID + ";").all()
     res.status(200).json({message: fetchTable})
   });
 
@@ -22,16 +50,6 @@ app.listen(4201, () => {
   console.log('DB endpoints listneing on port 4201!');
 });
 
-
-const Sqlite = require('better-sqlite3');
-
-const db = new Sqlite('messages.db', { verbose: console.log });
-
-db.pragma("journal_mode = WAL");
-
-
-const createTable = "CREATE TABLE IF NOT EXISTS messages('message' varchar, 'channelID' int, 'author' varchar);"
-db.exec(createTable);
 
 const newmessage = db.prepare('INSERT INTO messages (message, channelID, author) VALUES (?, ?, ?)');
 
