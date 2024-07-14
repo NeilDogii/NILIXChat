@@ -1,10 +1,13 @@
 import { redirect } from "next/navigation";
-import { fetchData, getSession, login, logout } from "../../../lib";
+import { fetchData, getSession, login} from "../../../lib";
 import styles from './login.module.css'
 import axios from "axios";
 
 export default async function Page() {
   const session = await getSession();
+  if (session) {
+    redirect("/chat");
+  }
   return (
     <div className={styles.login}>
       <div className={styles.loginBox}>
@@ -37,16 +40,6 @@ export default async function Page() {
             </div>
             <p className={styles.registerText}>Don't have an account?<a href="/register"> Register</a></p>
           </form>
-          {/* <form
-        action={async () => {
-          "use server";
-          await logout();
-          redirect("/login");
-        }}
-      >
-        <button type="submit">Logout</button>
-      </form> */}
-          {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
         </section>
       </div>
     </div>

@@ -11,7 +11,6 @@ const SendButton = () => {
   getSession().then(e => {
     if(!e){
       return router.push('/login')
-      // return redirect("/login");
     }else{
       setName(e.user.name)
     }
