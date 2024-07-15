@@ -18,4 +18,4 @@ node .
 # this starts the backend which includes the websockets for message transfer, express server for the database endpoints for auth and fetching messages 
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000/chat) with your browser to see the result.
