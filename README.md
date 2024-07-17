@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-The project is divided into 2 parts, frontend (nextjs) and backend (express using nodejs). 
+The project is divided into 2 parts, frontend (nextjs) and backend (express using nodejs) + SQLite database. 
 
 To run the frontend server
 
